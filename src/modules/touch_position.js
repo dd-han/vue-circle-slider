@@ -1,10 +1,11 @@
 export default class TouchPosition {
   /*
    */
-  constructor (containerElement, sliderRadius, sliderTolerance) {
+  constructor (containerElement, sliderRadius, sliderTolerance, minAngle) {
     this.containerElement = containerElement
     this.sliderRadius = sliderRadius
     this.sliderTolerance = sliderTolerance
+    this.minAngle = minAngle
     this.setNewPosition({x: 0, y: 0})
   }
 
@@ -21,7 +22,7 @@ export default class TouchPosition {
   /*
    */
   get sliderAngle () {
-    return (Math.atan2(this.relativeY - this.center, this.relativeX - this.center) + Math.PI * 3 / 2) % (Math.PI * 2)
+    return (Math.atan2(this.relativeY - this.center, this.relativeX - this.center) + Math.PI * 3 / 2 - Math.PI / 2 + this.minAngle) % (Math.PI * 2)
   }
 
   /*

@@ -75,6 +75,7 @@ or customize some properties:
 | ---------------- |:--------------| ---------|--------------|
 | side             | Number        | 100      | size of a side of a svg square in px |
 | min              | Number        | 0        | the minimum value |
+| minAngle         | Number        | PI / 2   | zero position (default is down) |
 | max              | Number        | 100      | the maximum value |
 | stepSize         | Number        | 1        | the gap between the values |
 | circleColor      | String        | `#334860`| color of slider circumference |

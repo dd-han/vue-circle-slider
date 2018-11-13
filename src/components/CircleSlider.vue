@@ -34,9 +34,14 @@ export default {
     this.updateFromPropValue(this.value)
   },
   mounted () {
-    this.touchPosition = new TouchPosition(this.$refs._svg, this.radius, this.radius / 2)
+    this.touchPosition = new TouchPosition(this.$refs._svg, this.radius, this.radius / 2, this.minAngle)
   },
   props: {
+    minAngle: {
+      type: Number,
+      required: false,
+      default: Math.PI / 2
+    },
     startAngleOffset: {
       type: Number,
       required: false,
@@ -147,14 +152,20 @@ export default {
     cpCenter () {
       return this.side / 2
     },
+    cpZeroPosition () {
+      return {
+        x: this.cpCenter + this.radius * Math.cos(this.minAngle),
+        y: this.cpCenter + this.radius * Math.sin(this.minAngle)
+      }
+    },
     cpAngle () {
-      return this.angle + Math.PI / 2
+      return this.angle + this.minAngle
     },
     cpMainCircleStrokeWidth () {
       return this.circleWidth || (this.side / 2) / this.circleWidthRel
     },
     cpPathDirection () {
-      return (this.cpAngle < 3 / 2 * Math.PI) ? 0 : 1
+      return ((this.angle + Math.PI / 2) < 3 / 2 * Math.PI) ? 0 : 1
     },
     cpPathX () {
       return this.cpCenter + this.radius * Math.cos(this.cpAngle)
@@ -170,8 +181,8 @@ export default {
     },
     cpPathD () {
       let parts = []
-      parts.push('M' + this.cpCenter)
-      parts.push(this.cpCenter + this.radius)
+      parts.push('M' + this.cpZeroPosition.x)
+      parts.push(this.cpZeroPosition.y)
       parts.push('A')
       parts.push(this.radius)
       parts.push(this.radius)
