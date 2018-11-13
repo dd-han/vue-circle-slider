@@ -119,6 +119,11 @@ export default {
       type: Number,
       required: false,
       default: 10
+    },
+    keepMaxMin: {
+      type: Boolean,
+      required: false,
+      default: true
     }
     // limitMin: {
     //   type: Number,
@@ -285,8 +290,8 @@ export default {
     /*
      */
     updateSlider () {
-      const angle = this.touchPosition.sliderAngle
-      if (Math.abs(angle - this.angle) < Math.PI) {
+      const angle = this.limitAngleRange(this.touchPosition.sliderAngle)
+      if (this.keepMaxMin === false || Math.abs(angle - this.angle) < Math.PI) {
         this.updateAngle(angle)
       }
     },

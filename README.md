@@ -80,6 +80,7 @@ or customize some properties:
 | stepSize         | Number        | 1        | the gap between the values |
 | circleColor      | String        | `#334860`| color of slider circumference |
 | progressColor    | String        | `#00be7e`| color of progress curve |
+| keepMaxMin       | Boolean       | true     | when drag over max or min, lock slider |
 | knobColor        | String        | `#00be7e`| knob color |
 | knobRadius       | Number        | null     | exact knob radius in px |
 | knobRadiusRel    | Number        | 7        | relative knob radius. radius value in px will be calculated as `(side/2) / knobRadiusRel` |
