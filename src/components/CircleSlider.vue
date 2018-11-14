@@ -2,7 +2,6 @@
   <div>
     <svg :width="side + 'px'" :height="side + 'px'" :viewBox="'0 0 ' + side + ' ' + side" ref="_svg"
       @touchmove="handleTouchMove"
-      @click="handleClick"
       @mousedown="handleMouseDown"
       @mouseup="handleMouseUp"
     >
@@ -144,6 +143,7 @@ export default {
       angle: 0,
       currentStepValue: 0,
       mousePressed: false,
+      animateProgress: false,
       circleSliderState: null,
       mousemoveTicks: 0
     }
@@ -229,6 +229,7 @@ export default {
      */
     handleMouseUp (e) {
       e.preventDefault()
+      this.handleClick(e)
       this.mousePressed = false
       window.removeEventListener('mousemove', this.handleWindowMouseMove)
       window.removeEventListener('mouseup', this.handleMouseUp)
@@ -274,6 +275,9 @@ export default {
       this.currentStepValue = this.circleSliderState.currentStep
 
       this.$emit('input', this.currentStepValue)
+      if (this.mousePressed === false && this.animateProgress === false) {
+        this.$emit('input-final', this.currentStepValue)
+      }
     },
 
     /*
@@ -301,9 +305,11 @@ export default {
     animateSlider (startAngle, endAngle) {
       const direction = startAngle < endAngle ? 1 : -1
       const curveAngleMovementUnit = direction * this.circleSliderState.angleUnit * 2
+      this.animateProgress = true
 
       const animate = () => {
         if (Math.abs(endAngle - startAngle) < Math.abs(2 * curveAngleMovementUnit)) {
+          this.animateProgress = false
           this.updateAngle(endAngle)
         } else {
           const newAngle = startAngle + curveAngleMovementUnit
