@@ -123,17 +123,17 @@ export default {
       type: Boolean,
       required: false,
       default: true
+    },
+    limitMin: {
+      type: Number,
+      required: false,
+      default: null
+    },
+    limitMax: {
+      type: Number,
+      required: false,
+      default: null
     }
-    // limitMin: {
-    //   type: Number,
-    //   required: false,
-    //   default: null
-    // },
-    // limitMax: {
-    //   type: Number,
-    //   required: false,
-    //   default: null
-    // }
   },
   data () {
     return {
@@ -165,6 +165,14 @@ export default {
     },
     cpAngle () {
       return this.angle + this.minAngle
+    },
+    cpAngleLimitMin () {
+      let range = (this.limitMin != null) ? this.steps.indexOf(this.limitMin) / this.stepsCount : 0
+      return Math.PI * 2 * range
+    },
+    cpAngleLimitMax () {
+      let range = (this.limitMax != null) ? this.steps.indexOf(this.limitMax) / this.stepsCount : 1
+      return Math.PI * 2 * range
     },
     cpMainCircleStrokeWidth () {
       return this.circleWidth || (this.side / 2) / this.circleWidthRel
@@ -211,7 +219,7 @@ export default {
     handleClick (e) {
       this.touchPosition.setNewPosition(e)
       if (this.touchPosition.isTouchWithinSliderRange) {
-        const newAngle = this.touchPosition.sliderAngle
+        const newAngle = this.limitAngleRange(this.touchPosition.sliderAngle)
         this.animateSlider(this.angle, newAngle)
       }
     },
@@ -271,7 +279,7 @@ export default {
      */
     updateAngle (angle) {
       this.circleSliderState.updateCurrentStepFromAngle(angle)
-      this.angle = this.circleSliderState.angleValue
+      this.angle = this.limitAngleRange(this.circleSliderState.angleValue)
       this.currentStepValue = this.circleSliderState.currentStep
 
       this.$emit('input', this.currentStepValue)
@@ -319,6 +327,18 @@ export default {
       }
 
       window.requestAnimationFrame(animate)
+    },
+
+    /*
+     */
+    limitAngleRange (angle) {
+      if (angle > this.cpAngleLimitMax) {
+        return this.cpAngleLimitMax
+      }
+      if (angle < this.cpAngleLimitMin) {
+        return this.cpAngleLimitMin
+      }
+      return angle
     }
   },
   watch: {

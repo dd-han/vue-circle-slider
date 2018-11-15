@@ -77,6 +77,8 @@ or customize some properties:
 | min              | Number        | 0        | the minimum value |
 | minAngle         | Number        | PI / 2   | zero position (`Math.PI / 2` for at down or `Math.PI / 2 * 3` for up) |
 | max              | Number        | 100      | the maximum value |
+| limitMin         | Number        | null     | limit minimum range | 
+| limitMax         | Number        | null     | limit maximum range | 
 | stepSize         | Number        | 1        | the gap between the values |
 | circleColor      | String        | `#334860`| color of slider circumference |
 | progressColor    | String        | `#00be7e`| color of progress curve |
