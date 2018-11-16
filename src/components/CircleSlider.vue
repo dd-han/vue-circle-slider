@@ -7,6 +7,7 @@
     >
       <g>
         <circle :stroke="circleColor" fill="none" :stroke-width="cpMainCircleStrokeWidth" :cx="cpCenter" :cy="cpCenter" :r="radius"></circle>
+        <path :stroke="disabledColor" fill="none" :stroke-width="cpMainCircleStrokeWidth" :d="cpPathDisableD"></path>
         <path :stroke="progressColor" fill="none" :stroke-width="cpPathStrokeWidth" :d="cpPathD"></path>
         <circle :fill="knobColor" :r="cpKnobRadius" :cx="cpPathX" :cy="cpPathY"></circle>
       </g>
@@ -83,6 +84,11 @@ export default {
       type: String,
       required: false,
       default: '#00be7e'
+    },
+    disabledColor: {
+      type: String,
+      required: false,
+      default: '#a0a0a0'
     },
     knobColor: {
       type: String,
@@ -204,6 +210,35 @@ export default {
       parts.push(1)
       parts.push(this.cpPathX)
       parts.push(this.cpPathY)
+      return parts.join(' ')
+    },
+    cpPathLimitStartX () {
+      return this.cpCenter + this.radius * Math.cos(this.cpAngleLimitMin + this.minAngle)
+    },
+    cpPathLimitStartY () {
+      return this.cpCenter + this.radius * Math.sin(this.cpAngleLimitMin + this.minAngle)
+    },
+    cpPathLimitEndX () {
+      return this.cpCenter + this.radius * Math.cos(this.cpAngleLimitMax + this.minAngle)
+    },
+    cpPathLimitEndY () {
+      return this.cpCenter + this.radius * Math.sin(this.cpAngleLimitMax + this.minAngle)
+    },
+    cpPathDisableDirection () {
+      return ((this.cpAngleLimitMax + this.minAngle + Math.PI / 2) < 3 / 2 * Math.PI) ? 0 : 1
+    },
+    cpPathDisableD () {
+      let parts = []
+      parts.push('M' + this.cpPathLimitEndX)
+      parts.push(this.cpPathLimitEndY)
+      parts.push('A')
+      parts.push(this.radius)
+      parts.push(this.radius)
+      parts.push(0)
+      parts.push(this.cpPathDisableDirection)
+      parts.push(1)
+      parts.push(this.cpPathLimitStartX)
+      parts.push(this.cpPathLimitStartY)
       return parts.join(' ')
     }
   },
