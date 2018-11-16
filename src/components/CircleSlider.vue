@@ -3,7 +3,6 @@
     <svg :width="side + 'px'" :height="side + 'px'" :viewBox="'0 0 ' + side + ' ' + side" ref="_svg"
       @touchmove="handleTouchMove"
       @mousedown="handleMouseDown"
-      @mouseup="handleMouseUp"
     >
       <g>
         <circle :stroke="circleColor" fill="none" :stroke-width="cpMainCircleStrokeWidth" :cx="cpCenter" :cy="cpCenter" :r="radius"></circle>
@@ -253,10 +252,10 @@ export default {
      */
     handleClick (e) {
       this.touchPosition.setNewPosition(e)
-      if (this.touchPosition.isTouchWithinSliderRange) {
-        const newAngle = this.limitAngleRange(this.touchPosition.sliderAngle)
-        this.animateSlider(this.angle, newAngle)
-      }
+      // if (this.touchPosition.isTouchWithinSliderRange) {
+      const newAngle = this.limitAngleRange(this.touchPosition.sliderAngle)
+      this.animateSlider(this.angle, newAngle)
+      // }
     },
 
     /*
