@@ -15,8 +15,16 @@ export default class TouchPosition {
     const dimensions = this.containerElement.getBoundingClientRect()
     const side = dimensions.width
     this.center = side / 2
-    this.relativeX = e.clientX - dimensions.left
-    this.relativeY = e.clientY - dimensions.top
+    let position = e
+    if (e.touches) {
+      if (e.touches.length > 0) {
+        position = e.touches[0]
+      } else {
+        return
+      }
+    }
+    this.relativeX = position.clientX - dimensions.left
+    this.relativeY = position.clientY - dimensions.top
   }
 
   /*

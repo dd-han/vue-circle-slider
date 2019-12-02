@@ -1,7 +1,7 @@
 <template>
   <div>
     <svg :width="side + 'px'" :height="side + 'px'" :viewBox="'0 0 ' + side + ' ' + side" ref="_svg"
-      @touchmove="handleTouchMove"
+      @touchstart="handleMouseDown"
       @mousedown="handleMouseDown"
     >
       <g>
@@ -250,21 +250,29 @@ export default {
 
     /*
      */
-    handleClick (e) {
+    handleClick (e, animated = true) {
       this.touchPosition.setNewPosition(e)
-      // if (this.touchPosition.isTouchWithinSliderRange) {
       const newAngle = this.limitAngleRange(this.touchPosition.sliderAngle)
-      this.animateSlider(this.angle, newAngle)
-      // }
+      if (animated) {
+        this.animateSlider(this.angle, newAngle)
+      }
     },
 
     /*
      */
     handleMouseDown (e) {
       e.preventDefault()
+      if (this.mousePressed === true || this.animateProgress === true) {
+        return
+      }
       this.mousePressed = true
       window.addEventListener('mousemove', this.handleWindowMouseMove)
       window.addEventListener('mouseup', this.handleMouseUp)
+
+      this.handleClick(e, false)
+      window.addEventListener('touchmove', this.handleWindowMouseMove)
+      window.addEventListener('touchend', this.handleMouseUp)
+      window.addEventListener('touchcancel', this.handleMouseUp)
     },
 
     /*
@@ -275,13 +283,18 @@ export default {
       this.mousePressed = false
       window.removeEventListener('mousemove', this.handleWindowMouseMove)
       window.removeEventListener('mouseup', this.handleMouseUp)
+      window.removeEventListener('touchmove', this.handleWindowMouseMove)
+      window.removeEventListener('touchend', this.handleMouseUp)
+      window.removeEventListener('touchcancel', this.handleMouseUp)
       this.mousemoveTicks = 0
     },
 
     /*
      */
     handleWindowMouseMove (e) {
-      e.preventDefault()
+      if (e.touches == null) {
+        e.preventDefault()
+      }
       if (this.mousemoveTicks < 5) {
         this.mousemoveTicks++
         return
@@ -293,24 +306,6 @@ export default {
 
     /*
      */
-    handleTouchMove (e) {
-      this.$emit('touchmove')
-      // Do nothing if two or more fingers used
-      if (e.targetTouches.length > 1 || e.changedTouches.length > 1 || e.touches.length > 1) {
-        return true
-      }
-
-      const lastTouch = e.targetTouches.item(e.targetTouches.length - 1)
-      this.touchPosition.setNewPosition(lastTouch)
-
-      if (this.touchPosition.isTouchWithinSliderRange) {
-        e.preventDefault()
-        this.updateSlider()
-      }
-    },
-
-    /*
-     */
     updateAngle (angle) {
       this.circleSliderState.updateCurrentStepFromAngle(angle)
       this.angle = this.limitAngleRange(this.circleSliderState.angleValue)
@@ -318,6 +313,7 @@ export default {
 
       this.$emit('input', this.currentStepValue)
       if (this.mousePressed === false && this.animateProgress === false) {
+        console.log('input-final')
         this.$emit('input-final', this.currentStepValue)
       }
     },
